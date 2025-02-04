@@ -27,8 +27,9 @@ func (ts *TaskService) PrintTasks() {
 }
 
 // AddTask adds a new task.
-func (ts *TaskService) AddTask(task string) {
+func (ts *TaskService) AddTask(task string) int {
 	ts.Tasks = append(ts.Tasks, Task{Id: len(ts.Tasks) + 1, Description: task, Status: "todo", CreatedAt: time.Now(), UpdatedAt: time.Now()})
+	return len(ts.Tasks)
 }
 
 // UpdateTask updates the task description for a given ID.

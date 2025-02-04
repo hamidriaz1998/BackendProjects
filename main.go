@@ -27,11 +27,12 @@ func main() {
 			fmt.Println("Usage: add <task_description>")
 			os.Exit(1)
 		}
-		task_service.AddTask(os.Args[2])
+		id := task_service.AddTask(os.Args[2])
 		err = task_service.WriteToFile()
 		if err != nil {
 			log.Fatalf("Error writing to file: %v", err)
 		}
+		fmt.Println("Task added with ID: ", id)
 
 	case "delete":
 		if len(os.Args) < 3 || (len(os.Args) > 2 && os.Args[2] == "help") {
