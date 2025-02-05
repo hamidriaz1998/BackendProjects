@@ -1,5 +1,7 @@
 # GitHub Activity CLI
 
+Solution for the [github-user-activity](https://roadmap.sh/projects/github-user-activity) challenge from [roadmap.sh](https://roadmap.sh/).
+
 A command-line tool to display recent public activity for a given GitHub username.
 
 ## Usage
@@ -18,15 +20,15 @@ go run main.go hamidriaz1998
 
 The tool will fetch and display a list of recent GitHub activities, such as:
 
-*   Pushing commits
-*   Creating issues
-*   Starring repositories
-*   Forking repositories
-*   Creating branches/repositories
+- Pushing commits
+- Creating issues
+- Starring repositories
+- Forking repositories
+- Creating branches/repositories
 
 ## Prerequisites
 
-*   Go installed (version 1.23.2 or later).
+- Go installed (version 1.23.2 or later).
 
 ## Installation
 

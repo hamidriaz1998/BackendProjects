@@ -1,5 +1,6 @@
 # TaskTrackerCLI
 
+Solution for the [task-tracker](https://roadmap.sh/projects/task-tracker) challenge from [roadmap.sh](https://roadmap.sh/).
 A simple command-line task tracking application written in Go. This application allows you to add, delete, mark (update status), and list tasks. Tasks are stored in a JSON file.
 
 ## Features
