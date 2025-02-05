@@ -9,6 +9,21 @@ import (
 	"strings"
 )
 
+type GithubActivity struct {
+	Type string `json:"type"`
+	Repo struct {
+		Name string `json:"name"`
+	}
+	Payload struct {
+		Commits []struct {
+			Message string `json:"message"`
+		} `json:"commits"`
+		Action  string `json:"action"`
+		Ref     string `json:"ref"`
+		RefType string `json:"ref_type"`
+	} `json:"payload"`
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Invalid number of arguments")
@@ -20,7 +35,7 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error fetchting user activity: %s\n", err)
 	}
-	err = displayActivity(body)
+	err = displayActivity(body, os.Args[1])
 	if err != nil {
 		fmt.Printf("Error displaying activity: %s", err)
 	}
@@ -40,8 +55,8 @@ func getGithubUserActivity(username string) ([]byte, error) {
 	return body, nil
 }
 
-func displayActivity(jsonData []byte) error {
-	var events []map[string]any
+func displayActivity(jsonData []byte, username string) error {
+	var events []GithubActivity
 	err := json.Unmarshal(jsonData, &events)
 	if err != nil {
 		return err
@@ -50,44 +65,16 @@ func displayActivity(jsonData []byte) error {
 		fmt.Println("No recent activity found.")
 		return nil
 	}
+	fmt.Printf("%s's recent activity(s)\n", username)
 	for _, event := range events {
 		finalString := ""
-		eventType := event["type"].(string)
-		payload, ok := event["payload"].(map[string]any)
-		if !ok {
-			finalString = fmt.Sprintf("Performed event of type %s", eventType)
-			fmt.Println(finalString)
-			continue
-		}
-		repo, ok := event["repo"].(map[string]any)
-		if !ok {
-			finalString = fmt.Sprintf("Performed event of type %s", eventType)
-			fmt.Println(finalString)
-			continue
-		}
-		name, ok := repo["name"].(string)
-		if !ok {
-			finalString = fmt.Sprintf("Performed event of type %s", eventType)
-			fmt.Println(finalString)
-			continue
-		}
-		switch eventType {
+		name := event.Repo.Name
+		switch event.Type {
 		case "PushEvent":
-			commits, ok := payload["commits"].([]any)
-			if !ok {
-				finalString = fmt.Sprintf("Performed event of type %s", eventType)
-				fmt.Println(finalString)
-				continue
-			}
-			commitCount := len(commits)
+			commitCount := len(event.Payload.Commits)
 			finalString = fmt.Sprintf("Pushed %d commit(s) to %s", commitCount, name)
 		case "IssuesEvent":
-			action, ok := payload["action"].(string)
-			if !ok {
-				finalString = fmt.Sprintf("Performed event of type %s", eventType)
-				fmt.Println(finalString)
-				continue
-			}
+			action := event.Payload.Action
 			action = strings.ToUpper(string(action[0])) + action[1:]
 			finalString = fmt.Sprintf("%s an issue in %s", action, name)
 		case "WatchEvent":
@@ -95,9 +82,9 @@ func displayActivity(jsonData []byte) error {
 		case "ForkEvent":
 			finalString = fmt.Sprintf("Forked %s", name)
 		case "CreateEvent":
-			finalString = fmt.Sprintf("Created %v in %s", payload["ref_type"], name)
+			finalString = fmt.Sprintf("Created %v in %s", event.Payload.RefType, name)
 		default:
-			finalString = fmt.Sprintf("Performed event of type %s in %s", eventType, name)
+			finalString = fmt.Sprintf("Performed event of type %s in %s", event.Type, name)
 		}
 		fmt.Println("- ", finalString)
 	}
