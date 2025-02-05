@@ -4,10 +4,10 @@ This repository serves as a central hub for my backend projects and code experim
 
 ## Project Overview
 
-| Project Name                         | Description                                                                                                                  |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| [TaskTracker](./TaskTracker)         | A simple command-line task tracking application written in Go, demonstrating CLI tool development and JSON data persistence. |
-| [github-activity](./github-activity) | A simple CLI tool written in Go that fetches and displays a user's GitHub activity.                                          |
+| Project Name                         | Description                                                                                                                  | Roadmap.sh link                                                          |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [TaskTracker](./TaskTracker)         | A simple command-line task tracking application written in Go, demonstrating CLI tool development and JSON data persistence. | [task-tracker](https://roadmap.sh/projects/task-tracker)                 |
+| [github-activity](./github-activity) | A simple CLI tool written in Go that fetches and displays a user's GitHub activity.                                          | [github-user-activity](https://roadmap.sh/projects/github-user-activity) |
 
 ## Usage
 
