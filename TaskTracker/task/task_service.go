@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+	"slices"
 	"time"
 )
 
@@ -61,7 +62,7 @@ func (ts *TaskService) UpdateStatus(id int, status string) error {
 func (ts *TaskService) DeleteTask(id int) error {
 	for i := range ts.Tasks {
 		if ts.Tasks[i].Id == id {
-			ts.Tasks = append(ts.Tasks[:i], ts.Tasks[i+1:]...)
+			ts.Tasks = slices.Delete(ts.Tasks, i, i+1)
 			return nil
 		}
 	}
