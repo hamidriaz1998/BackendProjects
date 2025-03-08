@@ -8,6 +8,7 @@ This repository serves as a central hub for my backend projects and code experim
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | [TaskTracker](./TaskTracker)         | A simple command-line task tracking application written in Go, demonstrating CLI tool development and JSON data persistence. | [task-tracker](https://roadmap.sh/projects/task-tracker)                 |
 | [github-activity](./github-activity) | A simple CLI tool written in Go that fetches and displays a user's GitHub activity.                                          | [github-user-activity](https://roadmap.sh/projects/github-user-activity) |
+| [expense-tracker](./expense-tracker) | A simple command-line expense tracking application written in Go, demonstrating CLI tool development and JSON data persistence. | [expense-tracker](https://roadmap.sh/projects/expense-tracker)           |
 
 ## Usage
 
