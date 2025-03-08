@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+body {
+                font-family: 'Inter', sans-serif;
+                background-color: #f5f7fa;
+                color: #374151;
+            }
+
+            .card {
+                border-radius: 1rem;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            }
+
+            .input-field {
+                border-radius: 0.5rem;
+                transition: all 0.2s;
+            }
+
+            .input-field:focus {
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+            }
+
+            .btn-primary {tab-btn {
+                color: #6b7280;
+                font-weight: 500;
+                position: relative;
+                transition: all 0.3s ease;
+            }
+
+            .tab-btn.active {
+                color: #2563eb;
+                background-color: #fff;
+            }
+
+            .tab-btn.active::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background-color: #2563eb;
+                animation: slideInFromLeft 0.3s ease-out;
+            }
+
+            @keyframes slideInFromLeft {
+                0% {
+                    width: 0;
+                    left: 50%;
+                    right: 50%;
+                }
+                100% {
+                    width: 100%;
+                    left: 0;
+                    right: 0;
+                }
+            }
+
+            .tab-container {
+                min-height: 450px; /* Set a minimum height so layout doesn't jump */
+            }
+
+            .tab-content {
+                transition: all 0.3s ease-in-out;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            .tab-content.active {
+                opacity: 1;
+                z-index: 1;
+                position: relative;
+                transform: translateY(0);
+                pointer-events: auto;
+                animation: fadeIn 0.5s ease-in-out;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }

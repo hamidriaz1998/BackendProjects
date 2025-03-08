@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/static/styles.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+        <title>Unit Converter</title>
+        <style>
+
+        </style>
+    </head>
+    <body class="min-h-screen p-4 md:p-8">
+        <div class="max-w-3xl mx-auto card bg-white border border-gray-100">
+            <!-- Header -->
+            <header class="p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-t-lg">
+                <h1 class="text-3xl font-bold text-center">Unit Converter</h1>
+                <p class="text-center text-blue-100 mt-2">Convert between different units of measurement</p>
+            </header>
+
+            <!-- Tab Navigation -->
+            <div class="border-b border-gray-200 bg-gray-50">
+                <nav class="flex">
+                    <button id="length-tab" class="tab-btn flex-1 px-6 py-4 text-center transition-all duration-200 hover:bg-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Length
+                    </button>
+                    <button id="weight-tab" class="tab-btn flex-1 px-6 py-4 text-center transition-all duration-200 hover:bg-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                        </svg>
+                        Weight
+                    </button>
+                    <button id="temp-tab" class="tab-btn flex-1 px-6 py-4 text-center transition-all duration-200 hover:bg-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Temperature
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-6">
+                <!-- Length Tab -->
+                <div id="length-content" class="tab-content">
+                    <form id="length-form" action="/convert/length" method="POST" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Input Value -->
+                            <div class="col-span-1">
+                                <label for="length-value" class="block mb-2 font-medium text-gray-700">Value</label>
+                                <input type="number" id="length-value" name="value" class="w-full px-4 py-3 border border-gray-300 input-field focus:outline-none" required value="{{.LengthValue}}" placeholder="Enter a number">
+                            </div>
+
+                            <!-- Unit Selection -->
+                            <div>
+                                <label for="length-from" class="block mb-2 font-medium text-gray-700">From</label>
+                                <select id="length-from" name="from" class="w-full px-4 py-3 border border-gray-300 input-field focus:outline-none bg-white">
+                                    <option value="millimeter" {{if eq .LengthFrom "millimeter"}}selected{{end}}>Millimeter</option>
+                                    <option value="centimeter" {{if eq .LengthFrom "centimeter"}}selected{{end}}>Centimeter</option>
+                                    <option value="meter" {{if eq .LengthFrom "meter"}}selected{{end}}>Meter</option>
+                                    <option value="kilometer" {{if eq .LengthFrom "kilometer"}}selected{{end}}>Kilometer</option>
+                                    <option value="inch" {{if eq .LengthFrom "inch"}}selected{{end}}>Inch</option>
+                                    <option value="foot" {{if eq .LengthFrom "foot"}}selected{{end}}>Foot</option>
+                                    <option value="yard" {{if eq .LengthFrom "yard"}}selected{{end}}>Yard</option>
+                                    <option value="mile" {{if eq .LengthFrom "mile"}}selected{{end}}>Mile</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="length-to" class="block mb-2 font-medium text-gray-700">To</label>
+                                <select id="length-to" name="to" class="w-full px-4 py-3 border border-gray-300 input-field focus:outline-none bg-white">
+                                    <option value="millimeter" {{if eq .LengthTo "millimeter"}}selected{{end}}>Millimeter</option>
+                                    <option value="centimeter" {{if eq .LengthTo "centimeter"}}selected{{end}}>Centimeter</option>
+                                    <option value="meter" {{if eq .LengthTo "meter"}}selected{{end}}>Meter</option>
+                                    <option value="kilometer" {{if eq .LengthTo "kilometer"}}selected{{end}}>Kilometer</option>
+                                    <option value="inch" {{if eq .LengthTo "inch"}}selected{{end}}>Inch</option>
+                                    <option value="foot" {{if eq .LengthTo "foot"}}selected{{end}}>Foot</option>
+                                    <option value="yard" {{if eq .LengthTo "yard"}}selected{{end}}>Yard</option>
+                                    <option value="mile" {{if eq .LengthTo "mile"}}selected{{end}}>Mile</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-center space-x-4">
+                            <button type="submit" class="px-8 py-3 btn-primary text-white font-medium rounded-md shadow-sm">Convert</button>
+                            <a href="/reset/length" class="px-8 py-3 btn-secondary text-gray-700 font-medium rounded-md text-center">Reset</a>
+                        </div>
+                    </form>
+
+                    <!-- Result Panel -->
+                    {{if .LengthResult}}
+                    <div id="length-result" class="mt-8 p-6 result-panel rounded-lg">
+                        <h3 class="text-lg font-medium text-blue-800 mb-2">Result</h3>
+                        <p class="text-2xl font-bold text-blue-700">{{.LengthResult}}</p>
+                    </div>
+                    {{end}}
+                </div>
+
+                <!-- Weight Tab (Hidden by default) -->
+                <div id="weight-content" class="tab-content hidden">
+                    <form id="weight-form" action="/convert/weight" method="POST" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Input Value -->
+                            <div class="col-span-1">
+                                <label for="weight-value" class="block mb-2 font-medium text-gray-700">Value</label>
+                                <input type="number" id="weight-value" name="value" class="w-full px-4 py-3 border border-gray-300 input-field focus:outline-none" required value="{{.WeightValue}}" placeholder="Enter a number">
+                            </div>
+
+                            <!-- Unit Selection -->
+                            <div>
+                                <label for="weight-from" class="block mb-2 font-medium text-gray-700">From</label>
+                                <select id="weight-from" name="from" class="w-full px-4 py-3 border border-gray-300 input-field focus:outline-none bg-white">
+                                    <option value="milligram" {{if eq .WeightFrom "milligram"}}selected{{end}}>Milligram</option>
+                                    <option value="gram" {{if eq .WeightFrom "gram"}}selected{{end}}>Gram</option>
+                                    <option value="kilogram" {{if eq .WeightFrom "kilogram"}}selected{{end}}>Kilogram</option>
+                                    <option value="ounce" {{if eq .WeightFrom "ounce"}}selected{{end}}>Ounce</option>
+                                    <option value="pound" {{if eq .WeightFrom "pound"}}selected{{end}}>Pound</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="weight-to" class="block mb-2 font-medium text-gray-700">To</label>
+                                <select id="weight-to" name="to" class="w-full px-4 py-3 border border-gray-300 input-field focus:outline-none bg-white">
+                                    <option value="milligram" {{if eq .WeightTo "milligram"}}selected{{end}}>Milligram</option>
+                                    <option value="gram" {{if eq .WeightTo "gram"}}selected{{end}}>Gram</option>
+                                    <option value="kilogram" {{if eq .WeightTo "kilogram"}}selected{{end}}>Kilogram</option>
+                                    <option value="ounce" {{if eq .WeightTo "ounce"}}selected{{end}}>Ounce</option>
+                                    <option value="pound" {{if eq .WeightTo "pound"}}selected{{end}}>Pound</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-center space-x-4">
+                            <button type="submit" class="px-8 py-3 btn-primary text-white font-medium rounded-md shadow-sm">Convert</button>
+                            <a href="/reset/weight" class="px-8 py-3 btn-secondary text-gray-700 font-medium rounded-md text-center">Reset</a>
+                        </div>
+                    </form>
+
+                    <!-- Result Panel -->
+                    {{if .WeightResult}}
+                    <div id="weight-result" class="mt-8 p-6 result-panel rounded-lg">
+                        <h3 class="text-lg font-medium text-blue-800 mb-2">Result</h3>
+                        <p class="text-2xl font-bold text-blue-700">{{.WeightResult}}</p>
+                    </div>
+                    {{end}}
+                </div>
+
+                <!-- Temperature Tab (Hidden by default) -->
+                <div id="temp-content" class="tab-content hidden">
+                    <form id="temp-form" action="/convert/temperature" method="POST" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Input Value -->
+                            <div class="col-span-1">
+                                <label for="temp-value" class="block mb-2 font-medium text-gray-700">Value</label>
+                                <input type="number" id="temp-value" name="value" class="w-full px-4 py-3 border border-gray-300 input-field focus:outline-none" required value="{{.TempValue}}" placeholder="Enter a number">
+                            </div>
+
+                            <!-- Unit Selection -->
+                            <div>
+                                <label for="temp-from" class="block mb-2 font-medium text-gray-700">From</label>
+                                <select id="temp-from" name="from" class="w-full px-4 py-3 border border-gray-300 input-field focus:outline-none bg-white">
+                                    <option value="celsius" {{if eq .TempFrom "celsius"}}selected{{end}}>Celsius</option>
+                                    <option value="fahrenheit" {{if eq .TempFrom "fahrenheit"}}selected{{end}}>Fahrenheit</option>
+                                    <option value="kelvin" {{if eq .TempFrom "kelvin"}}selected{{end}}>Kelvin</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="temp-to" class="block mb-2 font-medium text-gray-700">To</label>
+                                <select id="temp-to" name="to" class="w-full px-4 py-3 border border-gray-300 input-field focus:outline-none bg-white">
+                                    <option value="celsius" {{if eq .TempTo "celsius"}}selected{{end}}>Celsius</option>
+                                    <option value="fahrenheit" {{if eq .TempTo "fahrenheit"}}selected{{end}}>Fahrenheit</option>
+                                    <option value="kelvin" {{if eq .TempTo "kelvin"}}selected{{end}}>Kelvin</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-center space-x-4">
+                            <button type="submit" class="px-8 py-3 btn-primary text-white font-medium rounded-md shadow-sm">Convert</button>
+                            <a href="/reset/temperature" class="px-8 py-3 btn-secondary text-gray-700 font-medium rounded-md text-center">Reset</a>
+                        </div>
+                    </form>
+
+                    <!-- Result Panel -->
+                    {{if .TempResult}}
+                    <div id="temp-result" class="mt-8 p-6 result-panel rounded-lg">
+                        <h3 class="text-lg font-medium text-blue-800 mb-2">Result</h3>
+                        <p class="text-2xl font-bold text-blue-700">{{.TempResult}}</p>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="p-4 text-center text-sm text-gray-500 border-t border-gray-200">
+                <p>Made with ❤️ for easy unit conversions</p>
+            </footer>
+        </div>
+
+        <!-- Custom CSS -->
+        <style>
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: #f5f7fa;
+                color: #374151;
+            }
+
+            .card {
+                border-radius: 1rem;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            }
+
+            .input-field {
+                border-radius: 0.5rem;
+                transition: all 0.2s;
+            }
+
+            .input-field:focus {
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+            }
+
+            .btn-primary {
+                background-image: linear-gradient(to right, #3b82f6, #2563eb);
+                transition: all 0.2s;
+            }
+
+            .btn-primary:hover {
+                background-image: linear-gradient(to right, #2563eb, #1d4ed8);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 6px rgba(37, 99, 235, 0.1);
+            }
+
+            .btn-secondary {
+                background-color: #f3f4f6;
+                transition: all 0.2s;
+            }
+
+            .btn-secondary:hover {
+                background-color: #e5e7eb;
+            }
+
+            .result-panel {
+                background-color: #f0f7ff;
+                border-left: 4px solid #3b82f6;
+            }
+
+            .tab-btn {
+                color: #6b7280;
+                font-weight: 500;
+                position: relative;
+            }
+
+            .tab-btn.active {
+                color: #2563eb;
+                background-color: #fff;
+            }
+
+            .tab-btn.active::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background-color: #2563eb;
+            }
+        </style>
+
+        <!-- JavaScript -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Tab switching logic
+                const tabs = document.querySelectorAll('.tab-btn');
+                const contents = document.querySelectorAll('.tab-content');
+
+                function setActiveTab(tabId) {
+                    // Hide all tabs and content
+                    tabs.forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    contents.forEach(c => c.classList.add('hidden'));
+
+                    // Activate selected tab
+                    const activeTab = document.getElementById(tabId);
+                    if (activeTab) {
+                        activeTab.classList.add('active');
+
+                        // Show corresponding content
+                        const contentId = tabId.replace('-tab', '-content');
+                        const content = document.getElementById(contentId);
+                        if (content) {
+                            content.classList.remove('hidden');
+                        }
+                    }
+                }
+
+                // Add click handlers to tabs
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => setActiveTab(tab.id));
+                });
+
+                // Set initial active tab
+                {{if .ActiveTab}}
+                    setActiveTab('{{.ActiveTab}}-tab');
+                {{else}}
+                    setActiveTab('length-tab');
+                {{end}}
+
+                // Add some animation to the input fields
+                const inputs = document.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    input.addEventListener('focus', function() {
+                        this.parentElement.classList.add('scale-105');
+                        this.parentElement.style.transition = 'transform 0.2s';
+                    });
+
+                    input.addEventListener('blur', function() {
+                        this.parentElement.classList.remove('scale-105');
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
