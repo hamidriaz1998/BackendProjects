@@ -13,7 +13,7 @@ type Expense struct {
 }
 
 func (e Expense) Print() {
-	fmt.Printf("%d\t%s\t%s\t$%f", e.Id, e.GetDate(), e.Description, e.Amount)
+	fmt.Printf("%-6d\t%-20s\t%-25s\t$%.2f\n", e.Id, e.GetDate(), e.Description, e.Amount)
 }
 
 func (e Expense) GetDate() string {

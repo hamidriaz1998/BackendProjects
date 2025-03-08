@@ -63,7 +63,8 @@ func (service *ExpenseService) Load() {
 }
 
 func (service *ExpenseService) PrintExpenses() {
-	fmt.Println("ID\tDate\tDescription\tAmount")
+	fmt.Println("ID     Date                 Description               Amount")
+	fmt.Println("------ -------------------- ------------------------- ----------")
 	for _, expense := range service.Expenses {
 		expense.Print()
 	}
