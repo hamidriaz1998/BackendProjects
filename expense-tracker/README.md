@@ -12,14 +12,14 @@ A simple command-line application for tracking personal expenses, written in Go.
 
 ## Installation
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/expense-tracker.git
-cd expense-tracker
+1. **Get the code:**
 
-# Build the application
-go build
-```
+   - See the [main repository README](../README.md) for instructions on cloning either the entire repository or just this project using sparse checkout.
+
+2. **Build the application:**
+   ```bash
+   go build
+   ```
 
 ## Usage
 

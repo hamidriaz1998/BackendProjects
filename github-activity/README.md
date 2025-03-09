@@ -32,6 +32,9 @@ The tool will fetch and display a list of recent GitHub activities, such as:
 
 ## Installation
 
-1.  Clone the repository.
-2.  Navigate to the `github-activity` directory.
+1.  Get the code:
+
+    - See the [main repository README](../README.md) for instructions on cloning either the entire repository or just this project using sparse checkout.
+
+2.  Navigate to the `github-activity` directory (if you cloned the entire repository).
 3.  Run `go mod tidy` to download dependencies.

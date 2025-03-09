@@ -17,12 +17,9 @@ A simple command-line task tracking application written in Go. This application 
 
     - Go installed on your system (version 1.16 or later).
 
-2.  **Clone the repository:**
+2.  **Get the code:**
 
-    ```bash
-    git clone https://github.com/hamidriaz1998/TaskTrackerCLI.git
-    cd TaskTrackerCLI
-    ```
+    - See the [main repository README](../README.md) for instructions on cloning either the entire repository or just this project using sparse checkout.
 
 3.  **Build the application:**
 
