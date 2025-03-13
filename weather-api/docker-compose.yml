@@ -1,0 +1,25 @@
+services:
+  weather-api:
+    build: .
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - API_KEY=${API_KEY}
+      - PORT=${PORT}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    restart: unless-stopped
+    volumes:
+      - ./:/app
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  redis_data:

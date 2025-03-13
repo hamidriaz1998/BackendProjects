@@ -10,33 +10,33 @@ import (
 )
 
 type WeatherResponse struct {
-	Latitude        float64 `json:"latitude" redis:"latitude"`
-	Longitude       float64 `json:"longitude" redis:"longitude"`
-	ResolvedAddress string  `json:"resolvedAddress" redis:"resolved_address"`
-	Address         string  `json:"address" redis:"address"`
-	Timezone        string  `json:"timezone" redis:"timezone"`
+	Latitude        float64 `json:"latitude"`
+	Longitude       float64 `json:"longitude"`
+	ResolvedAddress string  `json:"resolvedAddress"`
+	Address         string  `json:"address"`
+	Timezone        string  `json:"timezone"`
 	Days            []struct {
-		Datetime      string  `json:"datetime" redis:"datetime"`
-		DatetimeEpoch int     `json:"datetimeEpoch" redis:"datetime_epoch"`
-		Tempmax       float64 `json:"tempmax" redis:"tempmax"`
-		Tempmin       float64 `json:"tempmin" redis:"tempmin"`
-		Temp          float64 `json:"temp" redis:"temp"`
-		Sunrise       string  `json:"sunrise" redis:"sunrise"`
-		SunriseEpoch  int     `json:"sunriseEpoch" redis:"sunrise_epoch"`
-		Sunset        string  `json:"sunset" redis:"sunset"`
-		SunsetEpoch   int     `json:"sunsetEpoch" redis:"sunset_epoch"`
-		Moonphase     float64 `json:"moonphase" redis:"moonphase"`
-		Description   string  `json:"description" redis:"description"`
-		Icon          string  `json:"icon" redis:"icon"`
-		Source        string  `json:"source" redis:"source"`
+		Datetime      string  `json:"datetime"`
+		DatetimeEpoch int     `json:"datetimeEpoch"`
+		Tempmax       float64 `json:"tempmax"`
+		Tempmin       float64 `json:"tempmin"`
+		Temp          float64 `json:"temp"`
+		Sunrise       string  `json:"sunrise"`
+		SunriseEpoch  int     `json:"sunriseEpoch"`
+		Sunset        string  `json:"sunset"`
+		SunsetEpoch   int     `json:"sunsetEpoch"`
+		Moonphase     float64 `json:"moonphase"`
+		Description   string  `json:"description"`
+		Icon          string  `json:"icon"`
+		Source        string  `json:"source"`
 		Hours         []struct {
-			Datetime      string  `json:"datetime" redis:"datetime"`
-			DatetimeEpoch int     `json:"datetimeEpoch" redis:"datetime_epoch"`
-			Temp          float64 `json:"temp" redis:"temp"`
-			Feelslike     float64 `json:"feelslike" redis:"feelslike"`
-			Icon          string  `json:"icon" redis:"icon"`
-		} `json:"hours" redis:"hours"`
-	} `json:"days" redis:"days"`
+			Datetime      string  `json:"datetime"`
+			DatetimeEpoch int     `json:"datetimeEpoch"`
+			Temp          float64 `json:"temp"`
+			Feelslike     float64 `json:"feelslike"`
+			Icon          string  `json:"icon"`
+		} `json:"hours"`
+	} `json:"days"`
 }
 
 type ApiClient struct {

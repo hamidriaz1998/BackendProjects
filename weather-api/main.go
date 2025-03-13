@@ -28,7 +28,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	cache := NewCache(redisUrl)
+	cache, err := NewCache(redisUrl)
+	if err != nil {
+		log.Fatalln("Connection to Redis failed: ", err)
+		os.Exit(1)
+	}
 	apiClient := NewApiClient(apiKey, cache)
 
 	http.HandleFunc("/weather", func(w http.ResponseWriter, r *http.Request) {
@@ -48,12 +52,19 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(data)
 	})
+	
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request){
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+		w.Write([]byte("\n"))
+		w.Write([]byte("Server is running"))
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"
 	}
 
-	log.Println("Server starting on port: ", port)
+	log.Println("Server starting on port:", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

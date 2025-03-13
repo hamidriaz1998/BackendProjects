@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -13,15 +12,15 @@ type Cache struct {
 	Client *redis.Client
 }
 
-func NewCache(connectionStr string) *Cache {
+func NewCache(connectionStr string) (*Cache, error) {
 	opt, err := redis.ParseURL(connectionStr)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
 	client := redis.NewClient(opt)
 	return &Cache{
 		Client: client,
-	}
+	}, nil
 }
 
 func (c *Cache) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
@@ -45,10 +44,10 @@ func (c *Cache) Get(ctx context.Context, key string, dest interface{}) (bool, er
 	if err := json.Unmarshal([]byte(val), &dest); err != nil {
 		return false, err
 	}
-	
+
 	return true, nil
 }
 
-func (c *Cache) Delete(ctx context.Context, key string) error{
+func (c *Cache) Delete(ctx context.Context, key string) error {
 	return c.Client.Del(ctx, key).Err()
 }
