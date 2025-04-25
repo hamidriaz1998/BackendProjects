@@ -1,6 +1,7 @@
 from cli.cli import get_args
+from port_scanner.scanner import scan_ports
 
 args = get_args()
+hosts, ports = args.host, args.port
 
-for p in args.port:
-    print(p)
+scan_ports(hosts, ports)

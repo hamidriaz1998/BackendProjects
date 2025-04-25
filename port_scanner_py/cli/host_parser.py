@@ -2,7 +2,8 @@ import argparse
 import ipaddress
 import socket
 
-def parse_host(value:str) -> list[str]:
+
+def parse_host(value: str) -> list[str]:
     # CIDR block
     if "/" in value:
         try:
@@ -23,7 +24,7 @@ def parse_host(value:str) -> list[str]:
             raise argparse.ArgumentTypeError(f"Invalid IP range format: {value}")
         if end < start:
             raise argparse.ArgumentTypeError(f"Invalid range end: {value}")
-        return [f"{parts[0]}.{parts[1]}.{parts[2]}.{i}" for i in range(start, end+1)]
+        return [f"{parts[0]}.{parts[1]}.{parts[2]}.{i}" for i in range(start, end + 1)]
 
     # Single IP
     else:
@@ -37,9 +38,12 @@ def parse_host(value:str) -> list[str]:
                 ip = socket.gethostbyname(value)
                 return [ip]
             except socket.gaierror:
-                raise argparse.ArgumentTypeError(f"Invalid IP address or hostname: {value}")
+                raise argparse.ArgumentTypeError(
+                    f"Invalid IP address or hostname: {value}"
+                )
 
-def parse_hosts(hosts:list[str]) -> list[str]:
+
+def parse_hosts(hosts: list[str]) -> list[str]:
     result = []
     for host in hosts:
         result.extend(parse_host(host))
