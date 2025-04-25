@@ -10,6 +10,9 @@ def get_args():
     parser.add_argument(
         "--host", nargs="+", help="List of IP or ranges", type=str, required=True
     )
+    parser.add_argument(
+        "--timeout", help="Timeout for each port scan", type=int, default=1
+    )
 
     port_group = parser.add_mutually_exclusive_group(required=False)
     port_group.add_argument(
