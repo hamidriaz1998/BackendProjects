@@ -20,10 +20,10 @@ def parse_port(value: str) -> list[int]:
             port = int(value)
         except ValueError:
             raise argparse.ArgumentTypeError(f"Invalid Port format: {value}")
-        
+
         if 0 <= port <= 65535:
             return [port]
-        raise argparse.ArgumentTypeError(f"Invalid Port: {value}")    
+        raise argparse.ArgumentTypeError(f"Invalid Port: {value}")
 
 
 def parse_ports(ports: list[str] = [], ports_file: str = ""):
