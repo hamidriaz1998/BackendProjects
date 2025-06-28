@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Modern URL shortener with real-time analytics and WebSocket updates"
+        />
+        <title>✨ Modern URL Shortener</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="styles.css" />
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+    <body>
+        <main class="container">
+            <header>
+                <h1>✨ URL Shortener</h1>
+                <p class="subtitle">
+                    Create short links with real-time analytics
+                </p>
+            </header>
+
+            <section class="stats-dashboard" aria-label="Real-time statistics">
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-icon">👥</span>
+                        <div class="stat-content">
+                            <span class="stat-label">Connected Users</span>
+                            <span id="connectedUsers" class="stat-value"
+                                >0</span
+                            >
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔗</span>
+                        <div class="stat-content">
+                            <span class="stat-label">Total URLs</span>
+                            <span id="totalUrls" class="stat-value">-</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🎯</span>
+                        <div class="stat-content">
+                            <span class="stat-label">Total Clicks</span>
+                            <span id="totalClicks" class="stat-value">-</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔌</span>
+                        <div class="stat-content">
+                            <span class="stat-label">Connection</span>
+                            <span id="connectionStatus" class="stat-value"
+                                >Connecting...</span
+                            >
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="url-creator" aria-label="Create shortened URL">
+                <form id="shortenForm" class="url-form">
+                    <div class="form-group">
+                        <label for="url" class="form-label">
+                            <span class="label-icon">🌐</span>
+                            Enter URL to shorten
+                        </label>
+                        <div class="input-wrapper">
+                            <input
+                                type="url"
+                                id="url"
+                                name="url"
+                                placeholder="https://example.com/very-long-url-that-needs-shortening"
+                                required
+                                autocomplete="url"
+                                aria-describedby="url-help"
+                            />
+                            <div class="input-decoration"></div>
+                        </div>
+                        <small id="url-help" class="form-help"
+                            >Enter any valid URL to create a short link</small
+                        >
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <span class="btn-icon">⚡</span>
+                        <span class="btn-text">Shorten URL</span>
+                    </button>
+                </form>
+
+                <div
+                    id="result"
+                    class="result"
+                    role="alert"
+                    aria-live="polite"
+                ></div>
+            </section>
+
+            <section class="url-list" aria-label="Recent shortened URLs">
+                <div class="section-header">
+                    <h3>
+                        <span class="section-icon">📊</span>
+                        Recent URLs
+                        <span class="live-indicator">LIVE</span>
+                    </h3>
+                    <p class="section-description">
+                        Real-time updates when URLs are clicked
+                    </p>
+                </div>
+                <div id="urlList" class="url-grid" role="list"></div>
+            </section>
+        </main>
+
+        <div
+            id="background-decoration"
+            class="background-decoration"
+            aria-hidden="true"
+        >
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+
+        <script src="app.js"></script>
+    </body>
+</html>
