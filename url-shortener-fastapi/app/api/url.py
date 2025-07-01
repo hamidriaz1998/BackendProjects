@@ -11,6 +11,15 @@ from app.utils import generate_random_string
 router = APIRouter(prefix="/urls", tags=["urls"])
 
 
+@router.get("/get_user_urls")
+async def get_user_urls(
+    user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    stmt = select(Url).where(Url.user_id == user.id)
+    urls = db.execute(stmt).scalars().all()
+    return {"urls": urls}
+
+
 @router.post("/shorten", response_model=GetUrlDTO)
 async def shorten(
     url: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)
@@ -57,12 +66,3 @@ async def delete_url(
     db.delete(url)
     db.commit()
     return {"message": "URL deleted"}
-
-
-@router.get("/user")
-async def get_user_urls(
-    user: User = Depends(get_current_user), db: Session = Depends(get_db)
-):
-    stmt = select(Url).where(Url.user_id == user.id)
-    urls = db.execute(stmt).scalars().all()
-    return {"urls": urls}
