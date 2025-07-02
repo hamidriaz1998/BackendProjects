@@ -1,10 +1,13 @@
+import os
 from sqlalchemy import create_engine
+from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker
-from app.models import Base
 
-engine = create_engine("sqlite:///url_shortener.db")
 
-Base.metadata.create_all(engine)
+load_dotenv()
+database_url = os.getenv("DATABASE_URL", "sqlite:///url_shortener.db")
+engine = create_engine(database_url)
+
 
 Session = sessionmaker(bind=engine)
 
