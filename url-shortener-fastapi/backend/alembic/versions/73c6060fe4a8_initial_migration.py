@@ -39,7 +39,7 @@ def upgrade() -> None:
         "urls",
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("original_url", sa.String(length=255), nullable=False),
-        sa.Column("short_url", sa.String(length=255), nullable=False, index=True),
+        sa.Column("short_url", sa.String(length=20), nullable=False),
         sa.Column("click_count", sa.Integer(), nullable=False),
         sa.Column("last_visited", sa.DateTime(timezone=True), nullable=True),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=True),
@@ -56,7 +56,9 @@ def upgrade() -> None:
 
     get_url_func = """
     CREATE OR REPLACE FUNCTION get_url_by_short_code_and_update(
-        short_code VARCHAR(255)
+        short_code VARCHAR(255),
+        host VARCHAR(255),
+        user_agent VARCHAR(255)
     )
     RETURNS VARCHAR(255)
     AS $$
@@ -70,24 +72,27 @@ def upgrade() -> None:
         INTO url_id, url, expires_at_v
         FROM urls
         WHERE short_url = short_code;
-    
+
         -- Not found at all
         IF url IS NULL THEN
             RETURN 'url not found';
         END IF;
-    
+
         -- Found but expired
         IF expires_at_v IS NOT NULL AND expires_at_v <= NOW() THEN
             RETURN 'url has expired';
         END IF;
-    
+
         -- Valid — update stats
         UPDATE urls
         SET
             last_visited = NOW(),
             click_count = COALESCE(click_count, 0) + 1
         WHERE id = url_id;
-    
+
+        -- Insert a new visit
+
+        INSERT INTO url_visits (host, user_agent, url_id, timestamp) VALUES (host, user_agent, url_id, NOW());
         RETURN url;
     END;
     $$ LANGUAGE plpgsql;

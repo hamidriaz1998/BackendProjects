@@ -1,5 +1,6 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import RedirectResponse
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
@@ -37,7 +38,7 @@ async def shorten(
     expiry = get_expiration_time(url.ttl_minutes)
     new_url = Url(
         short_url=short_code,
-        original_url=url.original_url,
+        original_url=str(url.original_url),
         user_id=user.id,
         expires_at=expiry,
     )
@@ -47,14 +48,30 @@ async def shorten(
 
 
 @router.get("/{short_code}")
-async def get_url(short_code: str, db: Session = Depends(get_db)):
-    stmt = text("SELECT get_url_by_short_code_and_update(:short_code)")
-    url = db.execute(stmt, {"short_code": short_code}).scalar_one_or_none()
+async def get_url(short_code: str, request: Request, db: Session = Depends(get_db)):
+    
+    host = request.headers.get("host")
+    x_forwarded_for = request.headers.get("x-forwarded-for")
+    if x_forwarded_for:
+        host = x_forwarded_for.split(",")[0].strip()
+
+    user_agent = request.headers.get("user-agent")
+
+    stmt = text(
+        "SELECT get_url_by_short_code_and_update(:short_code, :host, :user_agent)"
+    )
+    url = db.execute(
+        stmt, {"short_code": short_code, "host": host, "user_agent": user_agent}
+    ).scalar_one_or_none()
+
     if not url or url == "url not found":
         raise HTTPException(status_code=404, detail="URL not found")
+
     if url == "url has expired":
         raise HTTPException(status_code=410, detail="URL expired")
-    return Response(status_code=302, headers={"Location": url})
+    
+    db.commit()
+    return RedirectResponse(url)
 
 
 @router.delete("/{short_code}")
