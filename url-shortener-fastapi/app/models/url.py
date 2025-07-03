@@ -8,8 +8,9 @@ class Url(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     original_url = Column(String(255), nullable=False)
-    short_url = Column(String(255), unique=True, nullable=False)
+    short_url = Column(String(255), unique=True, nullable=False, index=True)
     click_count = Column(Integer, default=0, nullable=False)
+    last_visited = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), default=get_time)
     updated_at = Column(DateTime(timezone=True), default=get_time, onupdate=get_time)
     expires_at = Column(DateTime(timezone=True), nullable=True)

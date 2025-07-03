@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Response
-from sqlalchemy import select, update
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.api.auth import get_current_user
@@ -48,18 +48,13 @@ async def shorten(
 
 @router.get("/{short_code}")
 async def get_url(short_code: str, db: Session = Depends(get_db)):
-    stmt = select(Url).where(Url.short_url == short_code)
-    url = db.execute(stmt).scalars().first()
-    if not url:
+    stmt = text("SELECT get_url_by_short_code_and_update(:short_code)")
+    url = db.execute(stmt, {"short_code": short_code}).scalar_one_or_none()
+    if not url or url == "url not found":
         raise HTTPException(status_code=404, detail="URL not found")
-    update_stmt = (
-        update(Url)
-        .where(Url.short_url == short_code)
-        .values(click_count=Url.click_count + 1)
-    )
-    db.execute(update_stmt)
-    db.commit()
-    return Response(status_code=302, headers={"Location": str(url.original_url)})
+    if url == "url has expired":
+        raise HTTPException(status_code=410, detail="URL expired")
+    return Response(status_code=302, headers={"Location": url})
 
 
 @router.delete("/{short_code}")

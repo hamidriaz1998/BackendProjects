@@ -41,7 +41,6 @@ class GetUrlDTO(BaseModel):
     original_url: str
     short_url: str
     click_count: int
-    user_id: int
     expires_at: datetime
 
     class Config:
