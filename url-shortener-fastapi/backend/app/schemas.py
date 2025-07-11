@@ -1,6 +1,5 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, HttpUrl
 from datetime import datetime
-from enum import Enum
 
 
 class UserRegisterDTO(BaseModel):
@@ -30,7 +29,7 @@ class UserLoginDTO(BaseModel):
 
 
 class CreateUrlDTO(BaseModel):
-    original_url: str
+    original_url: HttpUrl
     ttl_minutes: float
 
     class Config:
