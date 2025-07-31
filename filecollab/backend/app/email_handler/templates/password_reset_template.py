@@ -5,19 +5,19 @@ from ..template_registry import register_template
 from .email_base import EmailBase
 
 
-@register_template(EmailType.OTP)
-class OTPTemplate(EmailBase):
+@register_template(EmailType.PASSWORD_RESET)
+class PasswordResetTemplate(EmailBase):
     def __init__(self, otp: int, valid_time: str, username: str) -> None:
         super().__init__()
         self.otp = otp
         self.valid_time = valid_time
         self.username = username
-        self.email_subject = "Your OTP Code - Action Required"
+        self.email_subject = "Password Reset Request - Action Required"
         self.email_html = """
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Your OTP Code</title>
+    <title>Password Reset Request</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -30,7 +30,7 @@ class OTPTemplate(EmailBase):
             line-height: 1.6;
         }
         h2 {
-            color: #4CAF50;
+            color: #FF6B35;
             font-size: 24px;
         }
         .email-container {
@@ -42,6 +42,14 @@ class OTPTemplate(EmailBase):
             margin: 0 auto;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #856404;
+        }
         .footer {
             font-size: 12px;
             color: #777;
@@ -52,11 +60,16 @@ class OTPTemplate(EmailBase):
 <body>
     <div class="email-container">
         <p>Dear {{ username }},</p>
-        <p>Your One-Time Password (OTP) is:</p>
+        <p>We received a request to reset your password. Your password reset code is:</p>
         <h2>{{ otp }}</h2>
-        <p>Please use this code to complete your verification. This code is valid for {{ valid_time }}.</p>
-        <p>If you did not request this, please ignore this email.</p>
-        <p>Thank you,</p>
+        <p>Please use this code to reset your password. This code is valid for {{ valid_time }}.</p>
+
+        <div class="warning">
+            <strong>Security Notice:</strong> If you did not request a password reset, please ignore this email. Your password will remain unchanged.
+        </div>
+
+        <p>For your security, do not share this code with anyone.</p>
+        <p>Best regards,</p>
         <p>Your Company Team</p>
         <div class="footer">
             <p>This is an automated message. Please do not reply to this email.</p>

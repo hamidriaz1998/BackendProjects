@@ -2,11 +2,11 @@ import os
 import smtplib
 from email.message import EmailMessage
 
-from pydantic import EmailStr
-from .email_types import EmailType
-from .templates import OTPTemplate
-
 from dotenv import load_dotenv
+from pydantic import EmailStr
+
+from .email_types import EmailType
+from .template_registry import TemplateRegistry
 
 load_dotenv()
 
@@ -33,16 +33,11 @@ class EmailHandler:
         self.smtp_password = SMTP_PASSWORD
 
     def send_email(self, receiver: EmailStr, email_type: EmailType, **kwargs):
-        template = None
+        template = TemplateRegistry.create_template(email_type, **kwargs)
+
         message = EmailMessage()
         message["From"] = self.sender_email
         message["To"] = receiver
-
-        match email_type:
-            case EmailType.OTP:
-                OTPTemplate.check_args(kwargs)
-                template = OTPTemplate(**kwargs)
-
         message["Subject"] = template.subject
         message.set_content(template.html, "html")
 
