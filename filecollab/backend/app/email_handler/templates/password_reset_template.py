@@ -1,7 +1,7 @@
 import jinja2
 
+from ..decorators import register_template
 from ..email_types import EmailType
-from ..template_registry import register_template
 from .email_base import EmailBase
 
 

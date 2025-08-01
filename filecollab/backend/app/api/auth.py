@@ -21,7 +21,14 @@ from app.auth_utils import (
 from app.db import get_db
 from app.email_handler import EmailHandler, EmailType
 from app.models import User, UserOTP
-from app.schemas import GetUserDTO, UserLoginDTO, UserOTPVerify, UserRegisterDTO
+from app.schemas import (
+    ForgotPasswordRequest,
+    GetUserDTO,
+    ResetPasswordRequest,
+    UserLoginDTO,
+    UserOTPVerify,
+    UserRegisterDTO,
+)
 from app.utils import get_expiration_time
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -71,7 +78,7 @@ async def register(
         email_type=EmailType.OTP,
         otp=otp.otp,
         valid_time=f"{expiry_in_minutes} minutes",
-        username=user.username
+        username=user.username,
     )
 
     return new_user
@@ -104,7 +111,7 @@ def request_otp(
     stmt = select(User).where(User.email == email)
     current_user = db.scalars(stmt).first()
     if not current_user:
-        raise HTTPException(status_code=404, detail="User not found")
+        return {"message": "If the email exists, a password reset code has been sent."}
 
     expiry_in_minutes = 10
     otp = generate_otp()
@@ -124,7 +131,7 @@ def request_otp(
         email_type=EmailType.OTP,
         otp=otp,
         valid_time=f"{expiry_in_minutes} minutes",
-        username=current_user.username
+        username=current_user.username,
     )
     return {"message": "OTP sent"}
 
@@ -160,6 +167,69 @@ async def get_current_user(
 
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+
+@router.post("/forgot-password")
+async def forgot_password(
+    request: ForgotPasswordRequest,
+    bg_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    stmt = select(User).where(User.email == request.email)
+    current_user = db.scalars(stmt).first()
+    if not current_user:
+        return {"message": "If the email exists, a password reset code has been sent."}
+
+    if not current_user.verified:
+        raise HTTPException(status_code=403, detail="User not verified")
+
+    expiry_in_minutes = 15
+    otp = generate_otp()
+
+    stmt = (
+        update(UserOTP)
+        .where(UserOTP.user_id == current_user.id)
+        .values(otp=otp, used=False, expiration=get_expiration_time(expiry_in_minutes))
+    )
+    db.execute(stmt)
+    db.commit()
+
+    email_handler = EmailHandler()
+    bg_tasks.add_task(
+        func=email_handler.send_email,
+        receiver=current_user.email,
+        email_type=EmailType.PASSWORD_RESET,
+        otp=otp,
+        valid_time=f"{expiry_in_minutes} minutes",
+        username=current_user.username,
+    )
+
+    return {"message": "If the email exists, a password reset code has been sent."}
+
+
+@router.post("/reset-password")
+async def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
+    stmt = select(User).where(User.email == request.email)
+    current_user = db.scalars(stmt).first()
+    if not current_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not current_user.verified:
+        raise HTTPException(status_code=403, detail="User not verified")
+
+    # Verify OTP
+    stmt = select(UserOTP).where(UserOTP.user_id == current_user.id)
+    current_otp = db.scalars(stmt).first()
+    if not current_otp or not verify_otp(current_otp, request.otp):
+        raise HTTPException(status_code=400, detail="Invalid or expired OTP")
+
+    # Update password and mark OTP as used
+    current_user.password = hash_password(request.new_password)
+    current_otp.used = True
+    db.commit()
+    db.refresh(current_user)
+
+    return {"message": "Password reset successfully"}
 
 
 @router.get("/me", response_model=GetUserDTO)

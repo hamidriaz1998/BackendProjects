@@ -30,3 +30,13 @@ class UserLoginDTO(BaseModel):
 class UserOTPVerify(BaseModel):
     email: EmailStr
     otp: int
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+    otp: int
+    new_password: str

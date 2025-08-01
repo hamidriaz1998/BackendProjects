@@ -42,11 +42,17 @@ class TemplateRegistry:
         return email_type in cls._templates
 
 
-def register_template(email_type: EmailType):
-    """Decorator to automatically register email templates."""
+# Process any pending registrations from decorators
+def _initialize_registrations():
+    """Initialize all pending template registrations."""
+    try:
+        from .decorators import _process_pending_registrations
 
-    def decorator(template_class: Type[EmailBase]):
-        TemplateRegistry.register(email_type, template_class)
-        return template_class
+        _process_pending_registrations()
+    except ImportError:
+        # decorators module not available yet
+        pass
 
-    return decorator
+
+# Call initialization when module is loaded
+_initialize_registrations()
