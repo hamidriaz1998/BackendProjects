@@ -20,4 +20,4 @@ def scan_port(host: str, port: int, timeout: int = 1):
         s.settimeout(timeout)
         result = s.connect_ex((host, port))
         if result == 0:
-            print(f"[+] Port {port} is open")
+            print("\033[92m", f"[+] Port {port} is open")
