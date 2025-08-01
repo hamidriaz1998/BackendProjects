@@ -4,12 +4,16 @@ This repository serves as a central hub for my backend projects and code experim
 
 ## Project Overview
 
-| Project Name                         | Description                                                                                                                    | Roadmap.sh link                                                          |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
-| [TaskTracker](./TaskTracker)         | A simple command-line task tracking application written in Go, demonstrating CLI tool development and JSON data persistence.   | [task-tracker](https://roadmap.sh/projects/task-tracker)                 |
-| [github-activity](./github-activity) | A simple CLI tool written in Go that fetches and displays a user's GitHub activity.                                            | [github-user-activity](https://roadmap.sh/projects/github-user-activity) |
-| [expense-tracker](./expense-tracker) | A simple command-line expense tracking application written in Go, demonstrating CLI tool development and CSV data persistence. | [expense-tracker](https://roadmap.sh/projects/expense-tracker)           |
-| [unit-converter](./unit-converter)   | A web application written in Go that provides a simple unit conversion service.                                                | [unit-converter](https://roadmap.sh/projects/unit-converter)             |
+| Project Name                                     | Description                                                                                                                    |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| [TaskTracker](./TaskTracker)                     | A simple command-line task tracking application written in Go, demonstrating CLI tool development and JSON data persistence.   |
+| [github-activity](./github-activity)             | A simple CLI tool written in Go that fetches and displays a user's GitHub activity.                                            |
+| [expense-tracker](./expense-tracker)             | A simple command-line expense tracking application written in Go, demonstrating CLI tool development and CSV data persistence. |
+| [unit-converter](./unit-converter)               | A web application written in Go that provides a simple unit conversion service.                                                |
+| [port-scanner](./port_scanner_py)                | A simple CLI tool written in Python that scans a range of ports on a given host.                                               |
+| [weather-api](./weather-api)                     | A simple CLI tool written in Go that fetches and displays weather information for a given location.                            |
+| [url-shortener-fastapi](./url-shortener-fastapi) | A simple URL shortening service written in FastAPI, demonstrating RESTful API development and database integration.            |
+| [url-shortener-ts](./url-shortener-ts)           | A simple URL shortening service written in TypeScript, demonstrating RESTful API development and database integration.         |
 
 ## Usage
 
