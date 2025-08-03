@@ -1,4 +1,5 @@
 from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy import select, text
@@ -49,7 +50,6 @@ async def shorten(
 
 @router.get("/{short_code}")
 async def get_url(short_code: str, request: Request, db: Session = Depends(get_db)):
-    
     host = request.headers.get("host")
     x_forwarded_for = request.headers.get("x-forwarded-for")
     if x_forwarded_for:
@@ -69,7 +69,7 @@ async def get_url(short_code: str, request: Request, db: Session = Depends(get_d
 
     if url == "url has expired":
         raise HTTPException(status_code=410, detail="URL expired")
-    
+
     db.commit()
     return RedirectResponse(url)
 

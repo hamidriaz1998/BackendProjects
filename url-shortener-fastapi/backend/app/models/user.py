@@ -10,7 +10,7 @@ class User(Base):
     email = Column(String(255), unique=True, nullable=False)
     username = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
-    max_ttl_minutes = Column(Integer, nullable=False, default=60)
+    max_ttl_minutes = Column(Integer, nullable=False, default=400000)
     created_at = Column(DateTime(timezone=True), default=get_time)
     updated_at = Column(DateTime(timezone=True), default=get_time, onupdate=get_time)
 
