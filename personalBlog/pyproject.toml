@@ -1,0 +1,18 @@
+[project]
+name = "personalBlog"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.16.2",
+    "argon2-cffi>=25.1.0",
+    "dotenv>=0.9.9",
+    "fastapi[standard]>=0.115.14",
+    "markdown>=3.8.2",
+    "psycopg2-binary>=2.9.10",
+    "pyjwt>=2.10.1",
+    "python-multipart>=0.0.20",
+    "sqlalchemy>=2.0.41",
+    "starlette>=0.47.2",
+]

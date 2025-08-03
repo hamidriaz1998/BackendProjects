@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Personal Blog{% endblock %}
+
+{% block content %}
+<div class="sidebar">
+    <h1>Personal Blog</h1>
+    <ul class="article-list">
+        {% for article in articles %}
+        <li class="article-item">
+            <a href="/article/{{ article.id }}" class="article-title">{{ article.title }}</a>
+            <span class="article-date">{{ article.publishing_date.strftime('%B %d, %Y') }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
