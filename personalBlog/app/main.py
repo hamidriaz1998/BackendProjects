@@ -1,7 +1,11 @@
+from typing import Optional
+
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import article_router, auth_router, get_all_articles
+from app.auth_utils import get_current_user_optional
+from app.models import User
 from app.templates import templates
 
 app = FastAPI()
@@ -10,9 +14,14 @@ app.include_router(article_router)
 
 
 @app.get("/")
-async def root(request: Request, articles: list = Depends(get_all_articles)):
+async def root(
+    request: Request,
+    articles: list = Depends(get_all_articles),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+):
     return templates.TemplateResponse(
-        "index.html", {"request": request, "articles": articles}
+        "index.html",
+        {"request": request, "articles": articles, "current_user": current_user},
     )
 
 

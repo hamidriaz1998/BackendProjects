@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }} - My Blog{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Article Content -->
+            <article class="card">
+                <div class="card-body p-4 p-md-5">
+                    <!-- Article Header -->
+                    <header class="mb-4">
+                        <h1 class="display-5 fw-bold text-primary mb-3">
+                            {{ article.title }}
+                        </h1>
+
+                        <div class="article-meta mb-3">
+                            <div class="d-flex align-items-center flex-wrap gap-3">
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    {{ article.publishing_date.strftime('%B %d, %Y') }}
+                                </span>
+                                <span class="text-muted">
+                                    <i class="fas fa-user"></i> Admin
+                                </span>
+                                <span class="text-muted">
+                                    <i class="fas fa-hashtag"></i> Article #{{ article.id }}
+                                </span>
+                            </div>
+                        </div>
+
+                        {% if current_user %}
+                        <div class="admin-controls">
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="/article/edit/{{ article.id }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Edit Article
+                                </a>
+                                <button class="btn btn-danger btn-sm" onclick="deleteArticle({{ article.id }}, '{{ article.title }}')">
+                                    <i class="fas fa-trash"></i> Delete Article
+                                </button>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </header>
+
+                    <hr class="my-4">
+
+                    <!-- Article Content -->
+                    <div class="article-content">
+                        {{ content_html | safe }}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Article Footer -->
+                    <footer>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div>
+                                <a href="/" class="btn btn-outline-primary">
+                                    <i class="fas fa-arrow-left"></i> Back to Home
+                                </a>
+                            </div>
+
+                            <div class="text-muted">
+                                <small>
+                                    <i class="fas fa-clock"></i>
+                                    Published {{ article.publishing_date.strftime('%B %d, %Y') }}
+                                </small>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            </article>
+
+        <!-- Navigation to other articles -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-compass"></i> Continue Reading
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        {% if prev_article %}
+                        <a href="/article/{{ prev_article.id }}" class="text-decoration-none">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-chevron-left text-primary me-2"></i>
+                                <div>
+                                    <small class="text-muted">Previous</small>
+                                    <div class="fw-bold">{{ prev_article.title[:50] }}{% if prev_article.title|length > 50 %}...{% endif %}</div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 text-end">
+                        {% if next_article %}
+                        <a href="/article/{{ next_article.id }}" class="text-decoration-none">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <div class="text-end">
+                                    <small class="text-muted">Next</small>
+                                    <div class="fw-bold">{{ next_article.title[:50] }}{% if next_article.title|length > 50 %}...{% endif %}</div>
+                                </div>
+                                <i class="fas fa-chevron-right text-primary ms-2"></i>
+                            </div>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            <!-- Additional Content Cards -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <!-- Share Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-share-alt"></i> Share This Article
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <p class="text-muted mb-3">Found this article interesting? Share it!</p>
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <button class="btn btn-outline-primary btn-sm" onclick="copyToClipboard()">
+                                    <i class="fas fa-copy"></i> Copy Link
+                                </button>
+                                <button class="btn btn-outline-success btn-sm" onclick="shareOnWhatsApp()">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </button>
+                                <button class="btn btn-outline-info btn-sm" onclick="shareOnTwitter()">
+                                    <i class="fab fa-twitter"></i> Twitter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <!-- Article Stats -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-bar"></i> Article Stats
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <div class="border-end">
+                                        <h4 class="text-primary mb-0">{{ (content_html | length // 5) or 1 }}</h4>
+                                        <small class="text-muted">Est. Words</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <h4 class="text-primary mb-0">{{ ((content_html | length // 1000) + 1) or 1 }}</h4>
+                                    <small class="text-muted">Min Read</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Articles -->
+            {% if articles %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-newspaper"></i> Other Articles
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for sidebar_article in articles[:6] %}
+                            {% if sidebar_article.id != article.id %}
+                            <div class="col-md-6 mb-3">
+                                <div class="border rounded p-3 h-100">
+                                    <h6 class="mb-2">
+                                        <a href="/article/{{ sidebar_article.id }}" class="text-decoration-none">
+                                            {{ sidebar_article.title[:50] }}{% if sidebar_article.title|length > 50 %}...{% endif %}
+                                        </a>
+                                    </h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        {{ sidebar_article.publishing_date.strftime('%b %d, %Y') }}
+                                    </small>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                    Confirm Delete
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the article "<span id="articleTitle"></span>"?</p>
+                <p class="text-muted"><small>This action cannot be undone.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">
+                    <i class="fas fa-trash"></i> Delete Article
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let articleToDelete = null;
+
+function deleteArticle(articleId, articleTitle) {
+    articleToDelete = articleId;
+    document.getElementById('articleTitle').textContent = articleTitle;
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+
+document.getElementById('confirmDelete').addEventListener('click', async function() {
+    if (articleToDelete) {
+        try {
+            const response = await fetch(`/article/${articleToDelete}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                window.location.href = '/';
+            } else {
+                alert('Error deleting article. Please try again.');
+            }
+        } catch (error) {
+            alert('Error deleting article. Please try again.');
+        }
+    }
+});
+
+// Share functions
+function copyToClipboard() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(function() {
+        const btn = event.target.closest('button');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-success');
+
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-primary');
+        }, 2000);
+    });
+}
+
+function shareOnWhatsApp() {
+    const url = window.location.href;
+    const title = "{{ article.title }}";
+    const text = `Check out this article: ${title}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+function shareOnTwitter() {
+    const url = window.location.href;
+    const title = "{{ article.title }}";
+    const text = `Reading: ${title}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(twitterUrl, '_blank');
+}
+
+// Smooth scroll for internal links
+document.addEventListener('DOMContentLoaded', function() {
+    const article = document.querySelector('.article-content');
+    const links = article.querySelectorAll('a[href^="#"]');
+
+    links.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Add copy button to code blocks
+    const codeBlocks = article.querySelectorAll('pre code');
+    codeBlocks.forEach(block => {
+        const pre = block.parentElement;
+        pre.style.position = 'relative';
+
+        const copyBtn = document.createElement('button');
+        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+        copyBtn.className = 'btn btn-sm btn-outline-light position-absolute';
+        copyBtn.style.top = '10px';
+        copyBtn.style.right = '10px';
+        copyBtn.style.opacity = '0.7';
+
+        copyBtn.addEventListener('click', function() {
+            navigator.clipboard.writeText(block.textContent);
+            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+            }, 2000);
+        });
+
+        pre.appendChild(copyBtn);
+    });
+});
+
+// Reading progress indicator
+window.addEventListener('scroll', function() {
+    const article = document.querySelector('.article-content');
+    const scrollTop = window.pageYOffset;
+    const docHeight = document.body.scrollHeight - window.innerHeight;
+    const scrollPercent = (scrollTop / docHeight) * 100;
+
+    // You can add a progress bar here if needed
+});
+</script>
+{% endblock %}

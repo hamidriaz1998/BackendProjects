@@ -87,7 +87,9 @@ async def register_api(
 
 @router.get("/login")
 async def login_form(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse(
+        "login.html", {"request": request, "current_user": None}
+    )
 
 
 @router.post("/login")
@@ -101,7 +103,8 @@ async def login(
     current_user = db.scalars(stmt).first()
     if not current_user or not verify_password(password, current_user.password):
         return templates.TemplateResponse(
-            "login.html", {"request": request, "error": "Invalid Credentials"}
+            "login.html",
+            {"request": request, "error": "Invalid Credentials", "current_user": None},
         )
 
     token_data = {"sub": str(current_user.id)}

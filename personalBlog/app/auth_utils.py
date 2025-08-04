@@ -49,8 +49,23 @@ async def get_current_user(
         stmt = select(User).where(User.id == user_id)
         current_user = db.scalars(stmt).first()
         if not current_user:
-            return RedirectResponse(url="/login", status_code=302)
+            return RedirectResponse(url="/auth/login", status_code=302)
         return current_user
 
     except Exception:
-        return RedirectResponse(url="/login", status_code=302)
+        return RedirectResponse(url="/auth/login", status_code=302)
+
+
+async def get_current_user_optional(
+    db: Session = Depends(get_db), access_token: Annotated[str | None, Cookie()] = None
+):
+    try:
+        if not access_token:
+            return None
+        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("sub")
+        stmt = select(User).where(User.id == user_id)
+        current_user = db.scalars(stmt).first()
+        return current_user
+    except Exception:
+        return None

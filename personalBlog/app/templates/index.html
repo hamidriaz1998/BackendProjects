@@ -1,17 +1,174 @@
 {% extends "base.html" %}
 
-{% block title %}Personal Blog{% endblock %}
+{% block title %}My Blog - Home{% endblock %}
 
 {% block content %}
-<div class="sidebar">
-    <h1>Personal Blog</h1>
-    <ul class="article-list">
-        {% for article in articles %}
-        <li class="article-item">
-            <a href="/article/{{ article.id }}" class="article-title">{{ article.title }}</a>
-            <span class="article-date">{{ article.publishing_date.strftime('%B %d, %Y') }}</span>
-        </li>
-        {% endfor %}
-    </ul>
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- Welcome Section -->
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary mb-3">
+                <i class="fas fa-blog"></i> Welcome to My Blog
+            </h1>
+            <p class="lead text-muted">Discover amazing articles and insights</p>
+        </div>
+
+        <!-- Admin Controls (only shown when logged in) -->
+        {% if current_user %}
+        <div class="admin-controls">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-cog"></i> Admin Panel
+                </h5>
+                <a href="/article/new" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add New Article
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Articles Section -->
+        {% if articles %}
+            <div class="articles-container">
+                <h2 class="mb-4 text-center">
+                    <i class="fas fa-newspaper"></i> Latest Articles
+                </h2>
+
+                {% for article in articles %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h3 class="card-title">
+                                    <a href="/article/{{ article.id }}" class="text-decoration-none">
+                                        {{ article.title }}
+                                    </a>
+                                </h3>
+
+                                <div class="article-meta mb-3">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Published on {{ article.publishing_date.strftime('%B %d, %Y') }}
+                                </div>
+
+                                <p class="card-text">
+                                    {{ article.content[:200] }}{% if article.content|length > 200 %}...{% endif %}
+                                </p>
+
+                                <a href="/article/{{ article.id }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-book-open"></i> Read More
+                                </a>
+                            </div>
+
+                            {% if current_user %}
+                            <div class="col-md-4 text-end">
+                                <div class="admin-actions">
+                                    <h6 class="text-muted mb-3">
+                                        <i class="fas fa-tools"></i> Admin Actions
+                                    </h6>
+                                    <div class="d-flex flex-column gap-2">
+                                        <a href="/article/edit/{{ article.id }}" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteArticle({{ article.id }}, '{{ article.title }}')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- No Articles Message -->
+            <div class="text-center py-5">
+                <div class="card">
+                    <div class="card-body py-5">
+                        <i class="fas fa-file-alt fa-4x text-muted mb-4"></i>
+                        <h3 class="text-muted">No Articles Yet</h3>
+                        <p class="text-muted mb-4">
+                            {% if current_user %}
+                                Start creating amazing content by adding your first article!
+                            {% else %}
+                                Check back later for amazing content.
+                            {% endif %}
+                        </p>
+                        {% if current_user %}
+                        <a href="/article/new" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create First Article
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                    Confirm Delete
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the article "<span id="articleTitle"></span>"?</p>
+                <p class="text-muted"><small>This action cannot be undone.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">
+                    <i class="fas fa-trash"></i> Delete Article
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let articleToDelete = null;
+
+function deleteArticle(articleId, articleTitle) {
+    articleToDelete = articleId;
+    document.getElementById('articleTitle').textContent = articleTitle;
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+
+document.getElementById('confirmDelete').addEventListener('click', async function() {
+    if (articleToDelete) {
+        try {
+            const response = await fetch(`/article/${articleToDelete}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Error deleting article. Please try again.');
+            }
+        } catch (error) {
+            alert('Error deleting article. Please try again.');
+        }
+    }
+});
+
+// Add smooth animations
+document.querySelectorAll('.card').forEach((card, index) => {
+    card.style.animationDelay = `${index * 0.1}s`;
+    card.classList.add('fade-in');
+});
+</script>
 {% endblock %}

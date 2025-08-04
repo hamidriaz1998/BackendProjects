@@ -1,0 +1,260 @@
+{% extends "base.html" %} {% block title %}New Article - My Blog{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="fas fa-plus-circle"></i> Create New Article
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form
+                    method="post"
+                    action="/article/new_article"
+                    id="articleForm"
+                >
+                    <div class="mb-4">
+                        <label for="title" class="form-label">
+                            <i class="fas fa-heading"></i> Article Title
+                        </label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="title"
+                            name="title"
+                            required
+                            placeholder="Enter an engaging title for your article"
+                            maxlength="255"
+                        />
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i>
+                            Make it catchy and descriptive (max 255 characters)
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="content" class="form-label">
+                            <i class="fas fa-file-alt"></i> Content
+                        </label>
+                        <textarea id="content" name="content"></textarea>
+                        <div class="form-text">
+                            <i class="fas fa-markdown"></i>
+                            Use Markdown syntax for formatting. Preview your
+                            content using the toolbar above.
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Publish Article
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Markdown Help Card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-question-circle"></i> Markdown Quick
+                    Reference
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-heading"></i> Headers</h6>
+                        <code># H1<br />## H2<br />### H3</code>
+
+                        <h6 class="mt-3">
+                            <i class="fas fa-bold"></i> Text Formatting
+                        </h6>
+                        <code>**bold**<br />*italic*<br />`code`</code>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-list"></i> Lists</h6>
+                        <code
+                            >- Item 1<br />- Item 2<br /><br />1. Numbered<br />2.
+                            List</code
+                        >
+
+                        <h6 class="mt-3">
+                            <i class="fas fa-link"></i> Links & Images
+                        </h6>
+                        <code>[Link](url)<br />![Image](url)</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block extra_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Initialize SimpleMDE
+        const simplemde = new SimpleMDE({
+            element: document.getElementById("content"),
+            spellChecker: false,
+            status: ["autosave", "lines", "words", "cursor"],
+            toolbar: [
+                "bold",
+                "italic",
+                "heading",
+                "|",
+                "quote",
+                "unordered-list",
+                "ordered-list",
+                "|",
+                "link",
+                "image",
+                "|",
+                "code",
+                "table",
+                "|",
+                "preview",
+                "side-by-side",
+                "fullscreen",
+                "|",
+                "guide",
+            ],
+            placeholder:
+                "Start writing your amazing article here...\n\nYou can use Markdown syntax:\n\n# This is a heading\n\n**This text is bold**\n\n*This text is italic*\n\n[This is a link](https://example.com)\n\n```\nThis is a code block\n```\n\n> This is a quote\n\n- This is a list item",
+            autofocus: false,
+            tabSize: 4,
+            indentWithTabs: false,
+            lineWrapping: true,
+            styleSelectedText: true,
+            shortcuts: {
+                drawTable: "Cmd-Alt-T",
+                toggleBlockquote: "Cmd-'",
+                toggleBold: "Cmd-B",
+                cleanBlock: "Cmd-E",
+                toggleHeadingSmaller: "Cmd-H",
+                toggleItalic: "Cmd-I",
+                drawLink: "Cmd-K",
+                toggleUnorderedList: "Cmd-L",
+                togglePreview: "Cmd-P",
+                toggleCodeBlock: "Cmd-Alt-C",
+                toggleOrderedList: "Cmd-Alt-L",
+                drawImage: "Cmd-Alt-I",
+            },
+        });
+
+        // Form validation and submission
+        const form = document.getElementById("articleForm");
+        const titleInput = document.getElementById("title");
+
+        // Character counter for title
+        titleInput.addEventListener("input", function () {
+            const remaining = 255 - this.value.length;
+            const helpText = this.parentElement.querySelector(".form-text");
+            if (remaining < 50) {
+                helpText.innerHTML = `<i class="fas fa-exclamation-triangle text-warning"></i> ${remaining} characters remaining`;
+            } else {
+                helpText.innerHTML =
+                    '<i class="fas fa-info-circle"></i> Make it catchy and descriptive (max 255 characters)';
+            }
+        });
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault(); // Always prevent default submission
+
+            const title = titleInput.value.trim();
+            const content = simplemde.value().trim();
+
+            if (!title) {
+                alert("Please enter a title for your article.");
+                titleInput.focus();
+                return;
+            }
+
+            if (!content) {
+                alert("Please write some content for your article.");
+                simplemde.codemirror.focus();
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.innerHTML =
+                '<i class="fas fa-spinner fa-spin"></i> Publishing...';
+            submitBtn.disabled = true;
+
+            // Create form data and submit
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("content", content);
+
+            fetch("/article/new_article", {
+                method: "POST",
+                body: formData,
+                credentials: "include",
+            })
+                .then((response) => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else if (response.ok) {
+                        return response.json().then((data) => {
+                            if (data.article_id) {
+                                window.location.href = `/article/${data.article_id}`;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        });
+                    } else {
+                        throw new Error("Submission failed");
+                    }
+                })
+                .catch((error) => {
+                    alert("Error publishing article. Please try again.");
+                    submitBtn.innerHTML =
+                        '<i class="fas fa-save"></i> Publish Article';
+                    submitBtn.disabled = false;
+                });
+        });
+
+        // Auto-save functionality
+        let saveTimeout;
+        const autoSave = () => {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                const title = titleInput.value.trim();
+                const content = simplemde.value().trim();
+
+                if (title && content) {
+                    localStorage.setItem("blog_draft_title", title);
+                    localStorage.setItem("blog_draft_content", content);
+                    console.log("Draft saved automatically");
+                }
+            }, 2000);
+        };
+
+        // Load saved draft
+        const savedTitle = localStorage.getItem("blog_draft_title");
+        const savedContent = localStorage.getItem("blog_draft_content");
+
+        if (savedTitle) {
+            titleInput.value = savedTitle;
+        }
+
+        if (savedContent) {
+            simplemde.value(savedContent);
+        }
+
+        // Set up auto-save
+        titleInput.addEventListener("input", autoSave);
+        simplemde.codemirror.on("change", autoSave);
+
+        // Clear draft on successful submission
+        form.addEventListener("submit", function () {
+            localStorage.removeItem("blog_draft_title");
+            localStorage.removeItem("blog_draft_content");
+        });
+    });
+</script>
+{% endblock %}
