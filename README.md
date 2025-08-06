@@ -14,6 +14,8 @@ This repository serves as a central hub for my backend projects and code experim
 | [weather-api](./weather-api)                     | A simple CLI tool written in Go that fetches and displays weather information for a given location.                            |
 | [url-shortener-fastapi](./url-shortener-fastapi) | A simple URL shortening service written in FastAPI, demonstrating RESTful API development and database integration.            |
 | [url-shortener-ts](./url-shortener-ts)           | A simple URL shortening service written in TypeScript, demonstrating RESTful API development and database integration.         |
+| [personalBlog](./personalBlog)                   | A personal blog written in fastapi and jinja2 templates with bootstrap styling.                                                |
+| [bloggingApi](./bloggingApi)                     | A simple blogging API written in fastapi, demonstrating RESTful API development and database integration.                      |
 
 ## Usage
 
