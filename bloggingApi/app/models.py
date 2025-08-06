@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, relationship
 
 
 def get_time():
@@ -18,6 +18,8 @@ class Category(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, unique=True, nullable=False)
 
+    posts = relationship("Post", back_populates="category")
+
 
 class Tag(Base):
     __tablename__ = "tags"
@@ -25,13 +27,16 @@ class Tag(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, unique=True, nullable=False)
 
+    posts = relationship(
+        "Post", secondary="post_tags_link", back_populates="tags", uselist=True
+    )
 
-class PostTags(Base):
-    __tablename__ = "post_tags"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    post_id = Column(Integer, ForeignKey("posts.id"), nullable=False)
-    tag_id = Column(Integer, ForeignKey("tags.id"), nullable=False)
+class PostTagsLink(Base):
+    __tablename__ = "post_tags_link"
+
+    post_id = Column(Integer, ForeignKey("posts.id"), primary_key=True)
+    tag_id = Column(Integer, ForeignKey("tags.id"), primary_key=True)
 
 
 class Post(Base):
@@ -40,10 +45,13 @@ class Post(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(255), nullable=False, unique=True)
     content = Column(Text, nullable=False)
-    category = Column(Integer, ForeignKey("categories.id"), nullable=True)
-    tags = Column(Integer, ForeignKey("post_tags.post_id"), nullable=True)
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
+    category = relationship("Category", back_populates="posts")
+    tags = relationship(
+        "Tag", secondary="post_tags_link", back_populates="posts", uselist=True
+    )
     created_at = Column(DateTime(timezone=True), default=get_time)
-    created_at = Column(
+    updated_at = Column(
         DateTime(timezone=True),
         default=get_time,
         onupdate=get_time,
